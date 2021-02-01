@@ -5,9 +5,10 @@ use crate::{
     object::{Hit, Object, Ray},
 };
 use glam::Vec3A as Vec3;
+use rand::Rng;
 use rayon::prelude::*;
 use serde_derive::Deserialize;
-use std::ops::Mul;
+use std::ops::{Add, Mul};
 
 #[derive(Deserialize)]
 pub struct Scene {
@@ -29,8 +30,7 @@ impl Scene {
             // is at (0, 0, 0), and looks along the -z axis. Assume the "viewport" is a rectangle
             // at z=-1.0 with horizontal and vertical along the x and y axes.
             let viewport_low_y = -1.0 * (camera.vertical_fov.to_radians() * 0.5).atan();
-            let viewport_low_x =
-                viewport_low_y * config.image_width as f32 / config.image_height as f32;
+            let viewport_low_x = viewport_low_y * config.image_width as f32 / config.image_height as f32;
 
             // Build the Vec4s to be multiplied (transformed) by the camera matrix.
             // "Directions" have w=0.0; positions have w=1.0.
@@ -49,28 +49,43 @@ impl Scene {
         let u_mult = 1.0 / (config.image_width - 1) as f32;
         let v_mult = 1.0 / (config.image_height - 1) as f32;
 
-        let make_ray = |row: usize, col: usize| Ray {
+        let make_ray = |row: f32, col: f32| Ray {
             origin: camera.position,
-            direction: (lower_left
-                + horizontal.mul(col as f32 * u_mult)
-                + vertical.mul(row as f32 * v_mult)
-                - camera.position)
-                .normalize(),
+            direction: (lower_left + horizontal.mul(col * u_mult) + vertical.mul(row * v_mult) - camera.position).normalize(),
         };
 
         // Parallelise at the per-row level so that each work unit has enough to chew on,
         // so that the threading overhead is somewhat minimised.
-        let rows = (0..config.image_height)
-            .into_par_iter()
-            .map(|row| {
-                (0..config.image_width)
-                    .map(|col| {
-                        self.get_colour(&make_ray(row, col))
-                            .unwrap_or(config.background_colour)
-                    })
-                    .collect::<Vec<_>>()
-            })
-            .collect::<Vec<_>>();
+        let rows = match config.rays_per_pixel {
+            1 => (0..config.image_height)
+                .into_par_iter()
+                .map(|row| {
+                    (0..config.image_width)
+                        .map(|col| self.get_colour(&make_ray(row as f32, col as f32)).unwrap_or(config.background_colour))
+                        .collect::<Vec<_>>()
+                })
+                .collect::<Vec<_>>(),
+            _ => (0..config.image_height)
+                .into_par_iter()
+                .map(|row| {
+                    let mut rng = rand::thread_rng();
+
+                    (0..config.image_width)
+                        .map(|col| {
+                            (0..config.rays_per_pixel).fold(Colour::zero(), |total, _| {
+                                total.add(
+                                    self.get_colour(&make_ray(
+                                        row as f32 + rng.gen_range(-0.5..0.5) as f32,
+                                        col as f32 + rng.gen_range(-0.5..0.5) as f32,
+                                    ))
+                                    .unwrap_or(config.background_colour),
+                                )
+                            }) / config.rays_per_pixel as f32
+                        })
+                        .collect::<Vec<_>>()
+                })
+                .collect::<Vec<_>>(),
+        };
 
         Image::from_rows(config.image_width, config.image_height, rows)
     }
@@ -94,9 +109,7 @@ impl Scene {
         }
 
         match closest {
-            Some((closest_hit, closest_object)) => {
-                Some(closest_object.material.get_colour(self, ray, closest_hit))
-            }
+            Some((closest_hit, closest_object)) => Some(closest_object.material.get_colour(self, ray, closest_hit)),
             None => None,
         }
     }

@@ -13,11 +13,7 @@ pub struct Image {
 
 impl Image {
     pub fn from_rows(width: usize, height: usize, rows: Vec<Vec<Colour>>) -> Image {
-        Image {
-            width,
-            height,
-            rows,
-        }
+        Image { width, height, rows }
     }
 
     pub fn into_ppm(self, filename: &str) -> std::io::Result<()> {
