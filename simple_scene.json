@@ -9,7 +9,7 @@
         "image_width": 1920,
         "image_height": 1080,
         "background_colour": [0.3, 0.4, 0.5],
-        "rays_per_pixel": 1
+        "rays_per_pixel": 100
     },
     "scene": {
         "objects": [

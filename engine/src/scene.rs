@@ -5,7 +5,7 @@ use crate::{
     object::{Hit, Object, Ray},
 };
 use glam::Vec3A as Vec3;
-use rand::Rng;
+use rand::distributions::{Distribution, Uniform};
 use rayon::prelude::*;
 use serde_derive::Deserialize;
 use std::ops::{Add, Mul};
@@ -69,16 +69,14 @@ impl Scene {
                 .into_par_iter()
                 .map(|row| {
                     let mut rng = rand::thread_rng();
+                    let dist = Uniform::from(-0.5f32..0.5f32);
 
                     (0..config.image_width)
                         .map(|col| {
                             (0..config.rays_per_pixel).fold(Colour::zero(), |total, _| {
                                 total.add(
-                                    self.get_colour(&make_ray(
-                                        row as f32 + rng.gen_range(-0.5..0.5) as f32,
-                                        col as f32 + rng.gen_range(-0.5..0.5) as f32,
-                                    ))
-                                    .unwrap_or(config.background_colour),
+                                    self.get_colour(&make_ray(row as f32 + dist.sample(&mut rng), col as f32 + dist.sample(&mut rng)))
+                                        .unwrap_or(config.background_colour),
                                 )
                             }) / config.rays_per_pixel as f32
                         })
