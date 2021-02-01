@@ -1,7 +1,9 @@
-use crate::camera::Camera;
-use crate::config::Config;
-use crate::image::{Colour, Image};
-use crate::object::{Hit, Object, Ray};
+use crate::{
+    camera::Camera,
+    config::Config,
+    image::{Colour, Image},
+    object::{Hit, Object, Ray},
+};
 use glam::Vec3A as Vec3;
 use rayon::prelude::*;
 use serde_derive::Deserialize;
@@ -97,13 +99,5 @@ impl Scene {
             }
             None => None,
         }
-    }
-}
-
-pub enum ParseError {}
-
-impl std::fmt::Display for ParseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Parse error")
     }
 }

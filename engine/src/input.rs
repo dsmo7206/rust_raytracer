@@ -1,6 +1,4 @@
-use crate::camera::Camera;
-use crate::config::Config;
-use crate::scene::Scene;
+use crate::{camera::Camera, config::Config, scene::Scene};
 use serde_derive::Deserialize;
 
 #[derive(Deserialize)]

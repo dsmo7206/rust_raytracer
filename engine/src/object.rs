@@ -1,7 +1,6 @@
+use crate::material::Material;
 use glam::Vec3A as Vec3;
 use serde_derive::Deserialize;
-
-use crate::material::Material;
 
 const MIN_HIT_DISTANCE: f32 = 0.01;
 

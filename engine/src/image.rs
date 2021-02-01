@@ -1,6 +1,7 @@
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::BufWriter;
+use std::{
+    fs::File,
+    io::{prelude::*, BufWriter},
+};
 
 pub type Colour = glam::Vec3A;
 
