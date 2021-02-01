@@ -26,9 +26,9 @@ impl Image {
 
         for row in self.rows.into_iter().rev() {
             for pixel in row {
-                write!(
+                writeln!(
                     file,
-                    "{} {} {}\n",
+                    "{} {} {}",
                     (pixel.x * 255.0) as usize,
                     (pixel.y * 255.0) as usize,
                     (pixel.z * 255.0) as usize

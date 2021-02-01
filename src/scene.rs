@@ -61,13 +61,12 @@ impl Scene {
         let rows = (0..config.image_height)
             .into_par_iter()
             .map(|row| {
-                let v = (0..config.image_width)
+                (0..config.image_width)
                     .map(|col| {
                         self.get_colour(&make_ray(row, col))
                             .unwrap_or(config.background_colour)
                     })
-                    .collect::<Vec<_>>();
-                v
+                    .collect::<Vec<_>>()
             })
             .collect::<Vec<_>>();
 
