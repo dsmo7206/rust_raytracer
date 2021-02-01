@@ -74,25 +74,27 @@ impl Scene {
     }
 
     fn get_colour(&self, ray: &Ray) -> Option<Colour> {
-        let mut closest_hit: Option<Hit> = None;
+        let mut closest: Option<(Hit, &Object)> = None;
 
         for object in self.objects.iter() {
-            if let Some(hit) = object.get_hit(ray) {
-                match &closest_hit {
-                    Some(prev_closest_hit) => {
+            if let Some(hit) = object.shape.get_hit(ray) {
+                match &closest {
+                    Some((prev_closest_hit, _)) => {
                         if hit.distance < prev_closest_hit.distance {
-                            closest_hit = Some(hit);
+                            closest = Some((hit, object));
                         }
                     }
                     None => {
-                        closest_hit = Some(hit);
+                        closest = Some((hit, object));
                     }
                 }
             }
         }
 
-        match closest_hit {
-            Some(_) => Some(Colour::new(0.9, 0.9, 0.9)),
+        match closest {
+            Some((closest_hit, closest_object)) => {
+                Some(closest_object.material.get_colour(self, ray, closest_hit))
+            }
             None => None,
         }
     }

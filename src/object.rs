@@ -1,6 +1,8 @@
 use glam::Vec3A as Vec3;
 use serde_derive::Deserialize;
 
+use crate::material::Material;
+
 const MIN_HIT_DISTANCE: f32 = 0.01;
 
 #[derive(Debug)]
@@ -22,14 +24,20 @@ pub struct Hit {
 }
 
 #[derive(Deserialize)]
-pub enum Object {
+pub struct Object {
+    pub shape: Shape,
+    pub material: Material,
+}
+
+#[derive(Deserialize)]
+pub enum Shape {
     Sphere(Sphere),
 }
 
-impl Object {
+impl Shape {
     pub fn get_hit(&self, ray: &Ray) -> Option<Hit> {
         match self {
-            Object::Sphere(inner) => inner.get_hit(ray),
+            Shape::Sphere(inner) => inner.get_hit(ray),
         }
     }
 }

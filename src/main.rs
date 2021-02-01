@@ -2,6 +2,7 @@ mod camera;
 mod config;
 mod image;
 mod input;
+mod material;
 mod object;
 mod scene;
 mod timer;

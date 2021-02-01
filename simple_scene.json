@@ -13,14 +13,20 @@
     },
     "scene": {
         "objects": [
-            {"Sphere": {
-                "center": [1.0, 0.0, -4.0],
-                "radius": 0.5
-            }},
-            {"Sphere": {
-                "center": [-1.0, 0.0, -4.0],
-                "radius": 0.2
-            }}
+            {
+                "shape": {"Sphere": {
+                    "center": [-1.0, 0.0, -4.0],
+                    "radius": 0.2
+                }},
+                "material": {"Solid": [0.0, 1.0, 0.0]}
+            },
+            {
+                "shape": {"Sphere": {
+                    "center": [1.0, 0.0, -4.0],
+                    "radius": 0.5
+                }},
+                "material": {"Diffuse": [1.0, 0.0, 0.0]}
+            }
         ]
     }
 }
