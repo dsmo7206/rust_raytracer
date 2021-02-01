@@ -1,0 +1,26 @@
+{
+    "camera": {
+        "position": [0.0, 0.0, 0.0],
+        "target": [0.0, 0.0, -1.0],
+        "up": [0.0, 0.1, 0.0],
+        "vertical_fov": 90.0
+    },
+    "config": {
+        "image_width": 1920,
+        "image_height": 1080,
+        "background_colour": [0.3, 0.4, 0.5],
+        "rays_per_pixel": 1
+    },
+    "scene": {
+        "objects": [
+            {"Sphere": {
+                "center": [1.0, 0.0, -4.0],
+                "radius": 0.5
+            }},
+            {"Sphere": {
+                "center": [-1.0, 0.0, -4.0],
+                "radius": 0.2
+            }}
+        ]
+    }
+}
