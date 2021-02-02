@@ -2,6 +2,7 @@ use crate::{
     camera::Camera,
     config::Config,
     image::{Colour, Image},
+    light::Light,
     object::{Hit, Object, Ray},
 };
 use glam::Vec3A as Vec3;
@@ -13,6 +14,7 @@ use std::ops::{Add, Mul};
 #[derive(Deserialize)]
 pub struct Scene {
     objects: Vec<Object>,
+    pub lights: Vec<Light>,
 }
 
 impl Scene {
@@ -88,7 +90,7 @@ impl Scene {
         Image::from_rows(config.image_width, config.image_height, rows)
     }
 
-    fn get_colour(&self, ray: &Ray) -> Option<Colour> {
+    pub fn get_hit(&self, ray: &Ray) -> Option<(Hit, &Object)> {
         let mut closest: Option<(Hit, &Object)> = None;
 
         for object in self.objects.iter() {
@@ -106,7 +108,11 @@ impl Scene {
             }
         }
 
-        match closest {
+        closest
+    }
+
+    fn get_colour(&self, ray: &Ray) -> Option<Colour> {
+        match self.get_hit(ray) {
             Some((closest_hit, closest_object)) => Some(closest_object.material.get_colour(self, ray, closest_hit)),
             None => None,
         }

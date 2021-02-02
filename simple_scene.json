@@ -34,6 +34,12 @@
                 }},
                 "material": {"Diffuse": [1.0, 0.0, 0.0]}
             }
+        ],
+        "lights": [
+            {"PointLight": {
+                "position": [0.0, 20.0, 0.0],
+                "colour": [1.0, 1.0, 1.0]
+            }}
         ]
     }
 }
